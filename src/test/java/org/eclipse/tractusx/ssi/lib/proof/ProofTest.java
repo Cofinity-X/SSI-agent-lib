@@ -22,7 +22,7 @@ public class ProofTest {
   }
 
   @Test
-  void shouldCreateProof(){
+  void shouldCreateProof() {
     assertDoesNotThrow(() -> new Proof(Map.of(Proof.TYPE, "foo", Proof.PROOF_PURPOSE, "bar")));
   }
 }
