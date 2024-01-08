@@ -67,7 +67,9 @@ public class LinkedDataTransformerTest {
     var transformedWithoutProof = linkedDataTransformer.transform(credentialWithoutProof);
 
     final VerifiableCredential verifiableCredentialWithProof =
-        verifiableCredentialBuilder.proof(new Proof(Map.of(Proof.TYPE, "foo"))).build();
+        verifiableCredentialBuilder
+            .proof(new Proof(Map.of(Proof.TYPE, "foo", Proof.PROOF_PURPOSE, "bar")))
+            .build();
 
     var transformedWithProof = linkedDataTransformer.transform(verifiableCredentialWithProof);
 

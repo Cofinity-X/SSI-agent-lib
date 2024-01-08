@@ -28,6 +28,8 @@ import java.util.Objects;
 /** The type Proof. */
 public class Proof extends HashMap<String, Object> {
 
+  public static final String PROOF_PURPOSE = "proofPurpose";
+
   /** The constant TYPE. */
   public static final String TYPE = "type";
 
@@ -42,6 +44,10 @@ public class Proof extends HashMap<String, Object> {
     try {
       // verify getters
       Objects.requireNonNull(this.getType());
+      Objects.requireNonNull(this.getProofPurpose());
+      if (this.getProofPurpose().isEmpty()) {
+        throw new IllegalStateException("proofPurpose must not be empty");
+      }
     } catch (Exception e) {
       throw new IllegalArgumentException("Invalid Proof", e);
     }
@@ -54,5 +60,9 @@ public class Proof extends HashMap<String, Object> {
    */
   public String getType() {
     return (String) this.get(TYPE);
+  }
+
+  public String getProofPurpose() {
+    return (String) this.get(PROOF_PURPOSE);
   }
 }
