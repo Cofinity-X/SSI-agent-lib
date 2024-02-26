@@ -327,6 +327,11 @@ SPDX-License-Identifier: Apache-2.0
                         <goals>
                             <goal>report</goal>
                         </goals>
+                         <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
