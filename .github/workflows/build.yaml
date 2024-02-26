@@ -75,6 +75,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify sonar:sonar -Dsonar.projectKey=${{env.SONAR_PROJECT_KEY}}
-
-      - name: Run tests
-        run: ./mvnw -B test --file ./pom.xml --no-transfer-progress
