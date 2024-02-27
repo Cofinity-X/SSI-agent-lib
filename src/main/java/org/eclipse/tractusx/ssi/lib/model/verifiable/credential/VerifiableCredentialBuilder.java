@@ -180,7 +180,7 @@ public class VerifiableCredentialBuilder {
     if (expirationDate != null) {
       map.put(VerifiableCredential.EXPIRATION_DATE, formatter.format(expirationDate));
     }
-    if(credentialStatus != null) {
+    if (credentialStatus != null) {
       map.put(VerifiableCredential.CREDENTIAL_STATUS, credentialStatus);
     }
     if (proof != null) {
