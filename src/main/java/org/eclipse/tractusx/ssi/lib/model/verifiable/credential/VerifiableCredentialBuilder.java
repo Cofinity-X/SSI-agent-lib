@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.NoArgsConstructor;
+import org.eclipse.tractusx.ssi.lib.model.JsonLdObject;
 import org.eclipse.tractusx.ssi.lib.model.proof.Proof;
 import org.eclipse.tractusx.ssi.lib.model.verifiable.Verifiable;
 
@@ -170,7 +171,7 @@ public class VerifiableCredentialBuilder {
 
     // Map.of does not work, as proof can be null
     Map<String, Object> map = new LinkedHashMap<>();
-    map.put(VerifiableCredential.CONTEXT, context);
+    map.put(JsonLdObject.CONTEXT, context);
     map.put(Verifiable.ID, id.toString());
     map.put(Verifiable.TYPE, types);
     map.put(VerifiableCredential.ISSUER, issuer.toString());
@@ -180,7 +181,9 @@ public class VerifiableCredentialBuilder {
     if (expirationDate != null) {
       map.put(VerifiableCredential.EXPIRATION_DATE, formatter.format(expirationDate));
     }
-
+    if (credentialStatus != null) {
+      map.put(VerifiableCredential.CREDENTIAL_STATUS, credentialStatus);
+    }
     if (proof != null) {
       map.put(Verifiable.PROOF, proof);
     }

@@ -58,7 +58,7 @@ public class Did {
    * @param didMethodIdentifier the did method identifier
    */
   public Did(DidMethod method, DidMethodIdentifier didMethodIdentifier) {
-    new Did(method, didMethodIdentifier, null);
+    this(method, didMethodIdentifier, null);
   }
 
   /**
@@ -67,8 +67,7 @@ public class Did {
    * @return the did
    */
   public Did excludeFragment() {
-    Did newDid = new Did(method, methodIdentifier, null);
-    return newDid;
+    return new Did(method, methodIdentifier, null);
   }
 
   /**

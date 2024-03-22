@@ -19,22 +19,24 @@
 
 package org.eclipse.tractusx.ssi.lib.jwt;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.Ed25519Signer;
-import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import java.net.URI;
+import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.eclipse.tractusx.ssi.lib.crypt.IPrivateKey;
-import org.eclipse.tractusx.ssi.lib.crypt.octet.OctetKeyPairFactory;
+import org.eclipse.tractusx.ssi.lib.crypt.util.SignerUtil;
 import org.eclipse.tractusx.ssi.lib.model.did.Did;
-import org.eclipse.tractusx.ssi.lib.model.verifiable.credential.VerifiableCredential;
+import org.eclipse.tractusx.ssi.lib.model.verifiable.Verifiable;
+import org.eclipse.tractusx.ssi.lib.proof.SignatureType;
+import org.eclipse.tractusx.ssi.lib.serialization.jwt.JwtConfig;
 import org.eclipse.tractusx.ssi.lib.serialization.jwt.SerializedVerifiablePresentation;
 
 /**
@@ -43,10 +45,14 @@ import org.eclipse.tractusx.ssi.lib.serialization.jwt.SerializedVerifiablePresen
  */
 public class SignedJwtFactory {
 
-  private final OctetKeyPairFactory octetKeyPairFactory;
+  private final SignatureType signatureType;
 
-  public SignedJwtFactory(OctetKeyPairFactory octetKeyPairFactory) {
-    this.octetKeyPairFactory = Objects.requireNonNull(octetKeyPairFactory);
+  public SignedJwtFactory() {
+    this.signatureType = SignatureType.JWS; // EdDSA
+  }
+
+  public SignedJwtFactory(SignatureType signatureType) {
+    this.signatureType = signatureType;
   }
 
   /**
@@ -61,18 +67,48 @@ public class SignedJwtFactory {
    */
   @SneakyThrows
   public SignedJWT create(
+      URI id,
       Did didIssuer,
       String audience,
       SerializedVerifiablePresentation serializedPresentation,
       IPrivateKey privateKey,
       String keyId) {
+    JwtConfig jwtConfig = JwtConfig.builder().expirationTime(60).build();
+    return create(id, didIssuer, audience, serializedPresentation, privateKey, keyId, jwtConfig);
+  }
+
+  /**
+   * Creates a signed JWT {@link SignedJWT} that contains a set of claims and an issuer. Although
+   * all private key types are possible, in the context of Distributed Identity using an Elliptic
+   * Curve key ({@code P-256}) is advisable.
+   *
+   * @param audience the value of the token audience claim, e.g. the IDS Webhook address.
+   * @param keyId the id of the key, the kid of the jws-header will be constructed via
+   *     <issuer>+"#"+<keyId>
+   * @param config the custom configuration for the JWT to create, e.g. custom expiration time (exp)
+   * @return a {@code SignedJWT} that is signed with the private key and contains all claims listed.
+   */
+  @SneakyThrows
+  public SignedJWT create(
+      URI id,
+      Did didIssuer,
+      String audience,
+      SerializedVerifiablePresentation serializedPresentation,
+      IPrivateKey privateKey,
+      String keyId,
+      JwtConfig config) {
 
     final String issuer = didIssuer.toString();
     final String subject = didIssuer.toString();
 
+    TypeReference<HashMap<String, Object>> typeRef =
+        new TypeReference<HashMap<String, Object>>() {};
+
     // make on object out of it so that it can get serialized again
     Map<String, Object> vp =
-        new ObjectMapper().readValue(serializedPresentation.getJson(), HashMap.class);
+        new ObjectMapper().readValue(serializedPresentation.getJson(), typeRef);
+
+    Date iat = new Date();
 
     var claimsSet =
         new JWTClaimsSet.Builder()
@@ -80,26 +116,33 @@ public class SignedJwtFactory {
             .subject(subject)
             .audience(audience)
             .claim("vp", vp)
-            .expirationTime(new Date(new Date().getTime() + 60 * 1000))
-            .jwtID(UUID.randomUUID().toString())
+            .issueTime(iat)
+            .expirationTime(new Date(iat.getTime() + config.getExpirationTime() * 1000))
+            .jwtID(id.toString())
             .build();
 
-    final OctetKeyPair octetKeyPair = octetKeyPairFactory.fromPrivateKey(privateKey);
-    return createSignedES256Jwt(octetKeyPair, claimsSet, issuer, keyId);
+    return createSignedES256Jwt(privateKey, claimsSet, issuer, keyId);
   }
 
   @SneakyThrows
   public SignedJWT create(
+      URI id,
       Did didIssuer,
       Did holderIssuer,
       Date expDate,
-      LinkedHashMap<String, Object> vc,
+      Map<String, Object> vc,
       IPrivateKey privateKey,
       String keyId) {
     final String issuer = didIssuer.toString();
     final String subject = holderIssuer.toString();
 
-    vc.remove(VerifiableCredential.PROOF);
+    // check if issuanceDate is presented in VC then use it, otherwise null
+    final Date issueDate =
+        vc.containsKey("issuanceDate")
+            ? Date.from(Instant.parse((String) vc.get("issuanceDate")))
+            : null;
+
+    vc.remove(Verifiable.PROOF);
 
     var claimsSet =
         new JWTClaimsSet.Builder()
@@ -107,53 +150,30 @@ public class SignedJwtFactory {
             .subject(subject)
             .claim("vc", vc)
             .expirationTime(expDate)
-            .jwtID(UUID.randomUUID().toString())
+            .issueTime(issueDate)
             .build();
 
-    final OctetKeyPair octetKeyPair = octetKeyPairFactory.fromPrivateKey(privateKey);
-    return createSignedES256Jwt(octetKeyPair, claimsSet, issuer, keyId);
+    return createSignedES256Jwt(privateKey, claimsSet, issuer, keyId);
   }
 
   public SignedJWT createSignedES256Jwt(
-      OctetKeyPair privateKey, JWTClaimsSet claimsSet, String issuer, String keyId) {
-    JWSSigner signer;
+      IPrivateKey privateKey, JWTClaimsSet claimsSet, String issuer, String keyId) {
+
     try {
-
-      signer = new Ed25519Signer(privateKey);
-      if (!signer.supportedJWSAlgorithms().contains(JWSAlgorithm.EdDSA)) {
-        throw new RuntimeException(
-            String.format(
-                "Invalid signing method. Supported signing methods: %s",
-                signer.supportedJWSAlgorithms().stream()
-                    .map(JWSAlgorithm::getName)
-                    .collect(Collectors.joining(", "))));
-      }
-
-      var algorithm = JWSAlgorithm.EdDSA;
+      JWSSigner signer = SignerUtil.getSigner(signatureType, privateKey);
       var type = JOSEObjectType.JWT;
       var header =
-          // FIXME issuer must be actual keyId and not only DID
-          new JWSHeader(
-              algorithm,
-              type,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              issuer + "#" + keyId,
-              true,
-              null,
-              null);
+          new JWSHeader.Builder(new JWSAlgorithm(signatureType.algorithm))
+              .type(type)
+              .keyID(issuer + "#" + keyId)
+              .build();
+
       var vc = new SignedJWT(header, claimsSet);
 
       vc.sign(signer);
       return vc;
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
   }
 }
