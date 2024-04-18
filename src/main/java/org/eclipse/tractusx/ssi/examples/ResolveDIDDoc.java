@@ -42,10 +42,8 @@ public class ResolveDIDDoc {
    *
    * @param didUrl the did url
    * @return the did document
-   * @throws DidResolverException the did resolve exception
-   * @throws DidParseException the did parse exception
-   */
-  public static DidDocument resolveDidDocument(String didUrl)
+*/
+  public static DidDocument resolveDocument(String didUrl)
       throws DidParseException, DidResolverException {
 
     DidWebParser didParser = new DidWebParser();
@@ -57,6 +55,9 @@ public class ResolveDIDDoc {
 
     var didResolver = new DidWebResolver(httpClient, didParser, enforceHttps);
 
-    return didResolver.resolve(did);
+    return didResolver
+        .resolve(did)
+        .orElseThrow(
+            () -> new DidParseException(String.format("no did document found for %s", didUrl)));
   }
 }

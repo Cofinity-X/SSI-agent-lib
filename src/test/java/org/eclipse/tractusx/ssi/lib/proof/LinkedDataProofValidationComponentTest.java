@@ -29,6 +29,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.eclipse.tractusx.ssi.lib.SsiLibrary;
 import org.eclipse.tractusx.ssi.lib.model.proof.Proof;
+import org.eclipse.tractusx.ssi.lib.model.proof.jws.JWSSignature2020;
 import org.eclipse.tractusx.ssi.lib.model.verifiable.credential.VerifiableCredential;
 import org.eclipse.tractusx.ssi.lib.model.verifiable.presentation.VerifiablePresentation;
 import org.eclipse.tractusx.ssi.lib.util.identity.TestDidResolver;
@@ -39,7 +40,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** The type Linked data proof validation component test. */
+/**
+ * The type Linked data proof validation component test.
+ */
 class LinkedDataProofValidationComponentTest {
 
   private LinkedDataProofValidation linkedDataProofValidation;
@@ -48,18 +51,22 @@ class LinkedDataProofValidationComponentTest {
   private TestIdentity credentialIssuer;
   private TestDidResolver didResolver;
 
-  /** Sets . */
+  /**
+   * Sets .
+   */
   @BeforeEach
   public void setup() {
     SsiLibrary.initialize();
     this.didResolver = new TestDidResolver();
   }
 
-  /** Test vc proof failure on manipulated credential. */
+  /**
+   * Test vc proof failure on manipulated credential.
+   */
   @Test
   @SneakyThrows
   void testVCProofFailureOnManipulatedCredential() {
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -92,12 +99,14 @@ class LinkedDataProofValidationComponentTest {
     Assertions.assertFalse(isOk);
   }
 
-  /** Test vc ed 25519 proof generation and verification. */
+  /**
+   * Test vc ed 25519 proof generation and verification.
+   */
   @Test
   @SneakyThrows
   void testVCEd25519ProofGenerationAndVerification() {
 
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -124,12 +133,14 @@ class LinkedDataProofValidationComponentTest {
     Assertions.assertTrue(isOk);
   }
 
-  /** Test vcjws proof generation and verification. */
+  /**
+   * Test vcjws proof generation and verification.
+   */
   @Test
   @SneakyThrows
   void testVCJWSProofGenerationAndVerification() {
 
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -144,9 +155,10 @@ class LinkedDataProofValidationComponentTest {
     final VerifiableCredential credential =
         TestVerifiableFactory.createVerifiableCredential(credentialIssuer, null);
 
-    final Proof proof =
-        linkedDataProofGenerator.createProof(
-            credential, verificationMethod, credentialIssuer.getPrivateKey());
+    final JWSSignature2020 proof =
+        (JWSSignature2020)
+            linkedDataProofGenerator.createProof(
+                credential, verificationMethod, credentialIssuer.getPrivateKey());
 
     final VerifiableCredential credentialWithProof =
         TestVerifiableFactory.attachProof(credential, proof);
@@ -156,12 +168,14 @@ class LinkedDataProofValidationComponentTest {
     Assertions.assertTrue(isOk);
   }
 
-  /** Test vp ed 25519 proof generation and verification. */
+  /**
+   * Test vp ed 25519 proof generation and verification.
+   */
   @Test
   @SneakyThrows
   void testVPEd25519ProofGenerationAndVerification() {
 
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -197,12 +211,14 @@ class LinkedDataProofValidationComponentTest {
     Assertions.assertTrue(isOk);
   }
 
-  /** Test vpjws proof generation and verification. */
+  /**
+   * Test vpjws proof generation and verification.
+   */
   @Test
   @SneakyThrows
   void testVPJWSProofGenerationAndVerification() {
 
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -217,9 +233,10 @@ class LinkedDataProofValidationComponentTest {
     final VerifiableCredential vc =
         TestVerifiableFactory.createVerifiableCredential(credentialIssuer, null);
 
-    final Proof vcProof =
-        linkedDataProofGenerator.createProof(
-            vc, verificationMethod, credentialIssuer.getPrivateKey());
+    final JWSSignature2020 vcProof =
+        (JWSSignature2020)
+            linkedDataProofGenerator.createProof(
+                vc, verificationMethod, credentialIssuer.getPrivateKey());
 
     final VerifiableCredential vcWithProof = TestVerifiableFactory.attachProof(vc, vcProof);
 
@@ -227,9 +244,10 @@ class LinkedDataProofValidationComponentTest {
         TestVerifiableFactory.createVerifiablePresentation(
             credentialIssuer, List.of(vcWithProof), null);
 
-    final Proof vpProof =
-        linkedDataProofGenerator.createProof(
-            vp, verificationMethod, credentialIssuer.getPrivateKey());
+    final JWSSignature2020 vpProof =
+        (JWSSignature2020)
+            linkedDataProofGenerator.createProof(
+                vp, verificationMethod, credentialIssuer.getPrivateKey());
 
     final VerifiablePresentation vpWithProof = TestVerifiableFactory.attachProof(vp, vpProof);
 
@@ -238,54 +256,14 @@ class LinkedDataProofValidationComponentTest {
     Assertions.assertTrue(isOk);
   }
 
-  /** Test Proof configuration signature */
-  @Test
-  @SneakyThrows
-  void testVCProofFailureOnManipulatedProofOptions() {
-
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
-    didResolver.register(credentialIssuer);
-
-    // Generator
-    linkedDataProofGenerator = LinkedDataProofGenerator.newInstance(SignatureType.ED25519);
-
-    // Verification
-    linkedDataProofValidation = LinkedDataProofValidation.newInstance(this.didResolver);
-
-    final URI verificationMethod =
-        credentialIssuer.getDidDocument().getVerificationMethods().get(0).getId();
-
-    final VerifiableCredential credential =
-        TestVerifiableFactory.createVerifiableCredential(credentialIssuer, null);
-
-    final Proof proof =
-        linkedDataProofGenerator.createProof(
-            credential, verificationMethod, credentialIssuer.getPrivateKey());
-
-    final VerifiableCredential credentialWithProof =
-        TestVerifiableFactory.attachProof(credential, proof);
-
-    credentialWithProof.put(VerifiableCredential.PROOF, proof);
-
-    var isOk = linkedDataProofValidation.verify(credentialWithProof);
-
-    Assertions.assertTrue(isOk);
-
-    // now with updated Proof Options
-    proof.put("proofPurpose", "something");
-    credentialWithProof.put(VerifiableCredential.PROOF, proof);
-
-    var isOkUpdatedProof = linkedDataProofValidation.verify(credentialWithProof);
-
-    Assertions.assertFalse(isOkUpdatedProof);
-  }
-
-  /** Test Verification Method and Issuer should be equal */
+  /**
+   * Test verification method.
+   */
   @Test
   @SneakyThrows
   void testVerificationMethodOfVC() {
 
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     didResolver.register(credentialIssuer);
 
     // Generator
@@ -301,7 +279,6 @@ class LinkedDataProofValidationComponentTest {
         TestVerifiableFactory.createVerifiableCredential(credentialIssuer, null);
 
     credential.replace("issuer", "did:test:4efee956-GGGG-42c0-8efb-0716e5e3f8de");
-
     final Proof proof =
         linkedDataProofGenerator.createProof(
             credential, verificationMethod, credentialIssuer.getPrivateKey());

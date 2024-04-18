@@ -309,8 +309,7 @@ public static SignedJWT createVPAsJWT(Did issuer, List<VerifiableCredential> cre
       new SignedJwtFactory(new OctetKeyPairFactory()), new JsonLdSerializerImpl(), issuer);
 
   //Build JWT
-  return presentationFactory.createPresentation(
-      issuer, credentials, audience, signingKey);
+  return presentationFactory.createPresentation(issuer, credentials, audience, signingKey);
 
 
 }

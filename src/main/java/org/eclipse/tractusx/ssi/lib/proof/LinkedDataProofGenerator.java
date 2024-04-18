@@ -16,14 +16,15 @@
  * under the License.
  *
  * SPDX-License-Identifier: Apache-2.0
- * *******************************************************************************
- */
+ ********************************************************************************/
 
 package org.eclipse.tractusx.ssi.lib.proof;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.tractusx.ssi.lib.crypt.IPrivateKey;
 import org.eclipse.tractusx.ssi.lib.exception.json.TransformJsonLdException;
@@ -31,10 +32,12 @@ import org.eclipse.tractusx.ssi.lib.exception.key.InvalidPrivateKeyFormatExcepti
 import org.eclipse.tractusx.ssi.lib.exception.proof.SignatureGenerateFailedException;
 import org.eclipse.tractusx.ssi.lib.exception.proof.UnsupportedSignatureTypeException;
 import org.eclipse.tractusx.ssi.lib.model.MultibaseString;
+import org.eclipse.tractusx.ssi.lib.model.ProofPurpose;
 import org.eclipse.tractusx.ssi.lib.model.base.MultibaseFactory;
 import org.eclipse.tractusx.ssi.lib.model.proof.Proof;
 import org.eclipse.tractusx.ssi.lib.model.proof.ed25519.Ed25519ProofBuilder;
 import org.eclipse.tractusx.ssi.lib.model.proof.ed25519.Ed25519Signature2020;
+import org.eclipse.tractusx.ssi.lib.model.proof.ed25519.Ed25519Signature2020Builder;
 import org.eclipse.tractusx.ssi.lib.model.proof.jws.JWSProofBuilder;
 import org.eclipse.tractusx.ssi.lib.model.proof.jws.JWSSignature2020;
 import org.eclipse.tractusx.ssi.lib.model.verifiable.Verifiable;
@@ -46,7 +49,9 @@ import org.eclipse.tractusx.ssi.lib.proof.transform.TransformedLinkedData;
 import org.eclipse.tractusx.ssi.lib.proof.types.ed25519.Ed25519ProofSigner;
 import org.eclipse.tractusx.ssi.lib.proof.types.jws.JWSProofSigner;
 
-/** The type Linked data proof generator. */
+/**
+ * The type Linked data proof generator.
+ */
 @RequiredArgsConstructor
 public class LinkedDataProofGenerator {
 
@@ -62,11 +67,9 @@ public class LinkedDataProofGenerator {
     if (type == SignatureType.ED25519) {
       return new LinkedDataProofGenerator(
           type, new LinkedDataHasher(), new LinkedDataTransformer(), new Ed25519ProofSigner());
-    } else if (type == SignatureType.JWS) {
-      return new LinkedDataProofGenerator(
-          type, new LinkedDataHasher(), new LinkedDataTransformer(), new JWSProofSigner());
     } else {
-      throw new UnsupportedSignatureTypeException("Invalide signautre type");
+      return new LinkedDataProofGenerator(
+          type, new LinkedDataHasher(), new LinkedDataTransformer(), new JWSProofSigner(type));
     }
   }
 
@@ -75,19 +78,46 @@ public class LinkedDataProofGenerator {
   private final LinkedDataTransformer transformer;
   private final ISigner signer;
 
+
   /**
-   * Create proof.
+   * Create proof proof.
    *
-   * @param verifiable the document
+   * @param document             the document
    * @param verificationMethodId the verification method id
-   * @param privateKey the private key
+   * @param privateKey           the private key
    * @return the proof
-   * @throws SsiException the ssi exception
-   * @throws InvalidPrivateKeyFormatException the invalide private key format
+   * @throws InvalidPrivateKeyFormatException the invalid private key format exception
+   * @throws SignatureGenerateFailedException the signature generate failed exception
+   * @throws TransformJsonLdException         the transform json ld exception
    */
-  public Proof createProof(Verifiable verifiable, URI verificationMethodId, IPrivateKey privateKey)
-      throws InvalidPrivateKeyFormatException, SignatureGenerateFailedException,
-          TransformJsonLdException {
+  public Proof createProof(Verifiable document, URI verificationMethodId, IPrivateKey privateKey)
+      throws InvalidPrivateKeyFormatException,
+      SignatureGenerateFailedException,
+      TransformJsonLdException {
+
+    return createProof(document, verificationMethodId, privateKey, ProofPurpose.ASSERTION_METHOD);
+  }
+
+  /**
+   * Create proof proof.
+   *
+   * @param verifiable           the verifiable
+   * @param verificationMethodId the verification method id
+   * @param privateKey           the private key
+   * @param proofPurpose         the proof purpose
+   * @return the proof
+   * @throws InvalidPrivateKeyFormatException the invalid private key format exception
+   * @throws SignatureGenerateFailedException the signature generate failed exception
+   * @throws TransformJsonLdException         the transform json ld exception
+   */
+  public Proof createProof(
+      Verifiable verifiable,
+      URI verificationMethodId,
+      IPrivateKey privateKey,
+      ProofPurpose proofPurpose)
+      throws InvalidPrivateKeyFormatException,
+      SignatureGenerateFailedException,
+      TransformJsonLdException {
 
     Proof proof = null;
     if (type == SignatureType.ED25519) {
@@ -128,11 +158,33 @@ public class LinkedDataProofGenerator {
     if (type == SignatureType.ED25519) {
 
       final MultibaseString multibaseString = MultibaseFactory.create(signature);
-      proof.put(Ed25519Signature2020.PROOF_VALUE, multibaseString);
-    } else {
-      proof.put(JWSSignature2020.JWS, new String(signature, StandardCharsets.UTF_8));
-    }
 
-    return proof;
+      return new Ed25519Signature2020Builder()
+          .proofPurpose(proofPurpose.purpose)
+          .proofValue(multibaseString.getEncoded())
+          .verificationMethod(verificationMethodId)
+          .created(Instant.now())
+          .build();
+    } else {
+
+      proof.put(JWSSignature2020.JWS, new String(signature, StandardCharsets.UTF_8));
+
+      Map<String, Object> standardEntries =
+          Map.of(
+              Proof.TYPE,
+              JWSSignature2020.JWS_VERIFICATION_KEY_2020,
+              JWSSignature2020.JWS,
+              new String(signature, StandardCharsets.UTF_8),
+              JWSSignature2020.VERIFICATION_METHOD,
+              verificationMethodId,
+              JWSSignature2020.CREATED,
+              Instant.now(),
+              JWSSignature2020.PROOF_PURPOSE,
+              proofPurpose);
+
+      HashMap<String, Object> entries = new HashMap<>(standardEntries);
+
+      return new JWSSignature2020(entries);
+    }
   }
 }

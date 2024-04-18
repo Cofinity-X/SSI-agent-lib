@@ -38,7 +38,9 @@ import org.eclipse.tractusx.ssi.lib.model.JsonLdObject;
 import org.eclipse.tractusx.ssi.lib.model.RemoteDocumentLoader;
 import org.eclipse.tractusx.ssi.lib.model.verifiable.Verifiable;
 
-/** The type Linked data transformer. */
+/**
+ * The type Linked data transformer.
+ */
 public class LinkedDataTransformer {
 
   public TransformedLinkedData transform(Verifiable document) throws TransformJsonLdException {
@@ -79,9 +81,8 @@ public class LinkedDataTransformer {
    *
    * @param jsonLdObject the json ld object
    * @return the rdf dataset
-   * @throws RuntimeException the runtime exception
    */
-  private RdfDataset toDataset(JsonLdObject jsonLdObject) throws RuntimeException {
+  private RdfDataset toDataset(JsonLdObject jsonLdObject) {
 
     var documentLoader = RemoteDocumentLoader.getInstance();
     documentLoader.setEnableHttps(true);
@@ -97,7 +98,7 @@ public class LinkedDataTransformer {
     try {
       return toRdfApi.get();
     } catch (JsonLdError ex) {
-      throw new RuntimeException(ex);
+      throw new IllegalStateException(ex);
     }
   }
 }

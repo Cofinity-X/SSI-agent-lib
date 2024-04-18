@@ -1,5 +1,4 @@
-/*
- * ******************************************************************************
+/********************************************************************************
  * Copyright (c) 2021,2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -16,62 +15,48 @@
  * under the License.
  *
  * SPDX-License-Identifier: Apache-2.0
- * *******************************************************************************
- */
+ ********************************************************************************/
 
 package org.eclipse.tractusx.ssi.lib.model.did;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.util.JSONObjectUtils;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.Map;
 import lombok.NoArgsConstructor;
-import org.eclipse.tractusx.ssi.lib.crypt.jwk.JsonWebKey;
 
-/** The type Jwk verification method builder. */
 @NoArgsConstructor
 public class JWKVerificationMethodBuilder {
-  private Did did;
-  private JsonWebKey jwk;
 
-  /**
-   * Did jwk verification method builder.
-   *
-   * @param did the did
-   * @return the jwk verification method builder
-   */
+  private Did did;
+  private JWK jwk;
+
   public JWKVerificationMethodBuilder did(Did did) {
     this.did = did;
     return this;
   }
 
-  /**
-   * Jwk jwk verification method builder.
-   *
-   * @param jwk the jwk
-   * @return the jwk verification method builder
-   */
-  public JWKVerificationMethodBuilder jwk(JsonWebKey jwk) {
+  public JWKVerificationMethodBuilder jwk(JWK jwk) {
     this.jwk = jwk;
     return this;
   }
 
-  /**
-   * Build jwk verification method.
-   *
-   * @return the jwk verification method
-   */
   public JWKVerificationMethod build() {
-    return new JWKVerificationMethod(
-        Map.of(
-            VerificationMethod.ID,
-            URI.create(did.toUri() + "#" + jwk.getKeyID()),
-            VerificationMethod.TYPE,
-            JWKVerificationMethod.DEFAULT_TYPE,
-            VerificationMethod.CONTROLLER,
-            this.did.toUri(),
-            JWKVerificationMethod.PUBLIC_KEY_JWK,
-            Map.of(
-                JWKVerificationMethod.JWK_KEK_TYPE, jwk.getKeyType(),
-                JWKVerificationMethod.JWK_CURVE, jwk.getCurv(),
-                JWKVerificationMethod.JWK_X, jwk.getX())));
+
+    try {
+      return new JWKVerificationMethod(
+          Map.of(
+              VerificationMethod.ID,
+              URI.create(did.toUri() + "#" + jwk.getKeyID()),
+              VerificationMethod.TYPE,
+              JWKVerificationMethod.DEFAULT_TYPE,
+              VerificationMethod.CONTROLLER,
+              this.did.toUri(),
+              JWKVerificationMethod.PUBLIC_KEY_JWK,
+              JSONObjectUtils.parse(jwk.toJSONString())));
+    } catch (ParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 }

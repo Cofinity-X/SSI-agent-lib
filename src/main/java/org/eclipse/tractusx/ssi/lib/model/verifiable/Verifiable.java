@@ -23,10 +23,12 @@ package org.eclipse.tractusx.ssi.lib.model.verifiable;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.NonNull;
 import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.tractusx.ssi.lib.model.JsonLdObject;
@@ -35,26 +37,42 @@ import org.eclipse.tractusx.ssi.lib.model.verifiable.credential.VerifiableCreden
 import org.eclipse.tractusx.ssi.lib.model.verifiable.presentation.VerifiablePresentation;
 import org.eclipse.tractusx.ssi.lib.serialization.SerializeUtil;
 
-/** The type Verifiable. */
+/**
+ * The type Verifiable.
+ */
 public abstract class Verifiable extends JsonLdObject {
 
-  /** The constant ID. */
+  /**
+   * The constant ID.
+   */
   public static final String ID = "id";
 
-  /** The constant TYPE. */
+  /**
+   * The constant TYPE.
+   */
   public static final String TYPE = "type";
 
-  /** The constant PROOF. */
+  /**
+   * The constant PROOF.
+   */
   public static final String PROOF = "proof";
 
-  /** The verification type */
+  /**
+   * The verification type
+   */
   private VerifiableType verifableType;
 
-  /** The enum Verifiable type. */
+  /**
+   * The enum Verifiable type.
+   */
   public enum VerifiableType {
-    /** Vc verifiable type. */
+    /**
+     * Vc verifiable type.
+     */
     VC,
-    /** Vp verifiable type. */
+    /**
+     * Vp verifiable type.
+     */
     VP
   }
 
@@ -73,21 +91,6 @@ public abstract class Verifiable extends JsonLdObject {
     this.checkId();
   }
 
-  /**
-   * Gets proof.
-   *
-   * @return the proof
-   */
-  public Proof getProof() {
-
-    final Object subject = this.get(PROOF);
-
-    if (subject == null) {
-      return null;
-    }
-
-    return new Proof((Map<String, Object>) subject);
-  }
 
   /**
    * Gets id.
@@ -107,6 +110,22 @@ public abstract class Verifiable extends JsonLdObject {
   @NonNull
   public List<String> getTypes() {
     return (List<String>) this.get(TYPE);
+  }
+
+  /**
+   * Gets proof.
+   *
+   * @return the proof
+   */
+  public Optional<Proof> getProof() {
+
+    final Object subject = this.get(PROOF);
+
+    if (subject == null) {
+      return Optional.empty();
+    }
+
+    return Optional.of(new Proof((Map<String, Object>) subject));
   }
 
   /**
@@ -152,10 +171,9 @@ public abstract class Verifiable extends JsonLdObject {
   public Verifiable removeProofSignature() {
 
     // Be careful, this function will return new object
-    Proof proof = this.getProof();
 
-    if (proof != null) {
-      var proofConfiguration = proof.toConfiguration();
+    if (this.getProof().isPresent()) {
+      var proofConfiguration = this.getProof().get().toConfiguration();
 
       // We need to update this object with new Proof
       this.put(PROOF, proofConfiguration);
@@ -170,9 +188,9 @@ public abstract class Verifiable extends JsonLdObject {
           iterator.hasNext(); ) {
 
         VerifiableCredential vc = (VerifiableCredential) iterator.next();
-        proof = vc.getProof();
 
-        if (proof != null) {
+        if (this.getProof().isPresent()) {
+          Proof proof = this.getProof().get();
           var proofConfiguration = proof.toConfiguration();
 
           // We need to update the copy object with new Proof
@@ -186,5 +204,27 @@ public abstract class Verifiable extends JsonLdObject {
     }
 
     return this;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    Verifiable that = (Verifiable) o;
+    return getId().equals(that.getId())
+        && verifableType == that.verifableType
+        && new HashSet<>(getTypes()).containsAll(that.getTypes());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), verifableType);
   }
 }

@@ -26,5 +26,5 @@ public enum EncodeType {
   /** Base 64 encode type. */
   BASE_64,
   /** Base 58 encode type. */
-  BASE_58,
+  BASE_58
 }
