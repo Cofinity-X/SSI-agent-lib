@@ -40,9 +40,7 @@ import org.eclipse.tractusx.ssi.lib.model.verifiable.credential.VerifiableCreden
 import org.eclipse.tractusx.ssi.lib.proof.LinkedDataProofGenerator;
 import org.eclipse.tractusx.ssi.lib.proof.SignatureType;
 
-/**
- * This is example class to demonstrate how create Verifiable Credentials
- */
+/** This is example class to demonstrate how create Verifiable Credentials */
 public class VC {
 
   private VC() {
@@ -65,7 +63,6 @@ public class VC {
     return verifiableCredentialBuilder
         .id(URI.create("did:test:id"))
         .type(List.of(VerifiableCredentialType.VERIFIABLE_CREDENTIAL))
-
         .issuer(URI.create("did:test:issuer"))
         .expirationDate(Instant.now().plusSeconds(3600))
         .issuanceDate(Instant.now())
@@ -78,19 +75,19 @@ public class VC {
    *
    * @param credential the credential
    * @param privateKey the private key
-   * @param issuer     the issuer
+   * @param issuer the issuer
    * @return the verifiable credential
    * @throws UnsupportedSignatureTypeException the unsupported signature type exception
-   * @throws InvalidPrivateKeyFormatException  the invalid private key format
-   * @throws SignatureGenerateFailedException  the ssi exception
-   * @throws TransformJsonLdException          the json-ld transform error
+   * @throws InvalidPrivateKeyFormatException the invalid private key format
+   * @throws SignatureGenerateFailedException the ssi exception
+   * @throws TransformJsonLdException the json-ld transform error
    */
   public static VerifiableCredential createVCWithED25519Proof(
       VerifiableCredential credential, IPrivateKey privateKey, Did issuer)
       throws UnsupportedSignatureTypeException,
-      InvalidPrivateKeyFormatException,
-      SignatureGenerateFailedException,
-      TransformJsonLdException {
+          InvalidPrivateKeyFormatException,
+          SignatureGenerateFailedException,
+          TransformJsonLdException {
 
     // VC Builder
     final VerifiableCredentialBuilder builder =
@@ -116,25 +113,24 @@ public class VC {
     return builder.build();
   }
 
-  
   /**
    * Create vc with jws proof verifiable credential.
    *
    * @param credential the credential
    * @param privateKey the private key
-   * @param issuer     the issuer
+   * @param issuer the issuer
    * @return the verifiable credential
    * @throws UnsupportedSignatureTypeException the unsupported signature type exception
-   * @throws InvalidPrivateKeyFormatException  the invalid private key format exception
-   * @throws SignatureGenerateFailedException  the signature generate failed exception
-   * @throws TransformJsonLdException          the transform json ld exception
+   * @throws InvalidPrivateKeyFormatException the invalid private key format exception
+   * @throws SignatureGenerateFailedException the signature generate failed exception
+   * @throws TransformJsonLdException the transform json ld exception
    */
   public static VerifiableCredential createVCWithJWSProof(
       VerifiableCredential credential, IPrivateKey privateKey, Did issuer)
       throws UnsupportedSignatureTypeException,
-      InvalidPrivateKeyFormatException,
-      SignatureGenerateFailedException,
-      TransformJsonLdException {
+          InvalidPrivateKeyFormatException,
+          SignatureGenerateFailedException,
+          TransformJsonLdException {
 
     // VC Builder
     final VerifiableCredentialBuilder builder =

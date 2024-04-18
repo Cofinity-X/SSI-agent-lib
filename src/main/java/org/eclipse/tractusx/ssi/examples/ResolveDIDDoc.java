@@ -42,7 +42,7 @@ public class ResolveDIDDoc {
    *
    * @param didUrl the did url
    * @return the did document
-*/
+   */
   public static DidDocument resolveDocument(String didUrl)
       throws DidParseException, DidResolverException {
 

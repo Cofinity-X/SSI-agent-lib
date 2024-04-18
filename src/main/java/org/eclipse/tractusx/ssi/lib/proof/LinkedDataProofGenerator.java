@@ -49,9 +49,7 @@ import org.eclipse.tractusx.ssi.lib.proof.transform.TransformedLinkedData;
 import org.eclipse.tractusx.ssi.lib.proof.types.ed25519.Ed25519ProofSigner;
 import org.eclipse.tractusx.ssi.lib.proof.types.jws.JWSProofSigner;
 
-/**
- * The type Linked data proof generator.
- */
+/** The type Linked data proof generator. */
 @RequiredArgsConstructor
 public class LinkedDataProofGenerator {
 
@@ -78,22 +76,21 @@ public class LinkedDataProofGenerator {
   private final LinkedDataTransformer transformer;
   private final ISigner signer;
 
-
   /**
    * Create proof proof.
    *
-   * @param document             the document
+   * @param document the document
    * @param verificationMethodId the verification method id
-   * @param privateKey           the private key
+   * @param privateKey the private key
    * @return the proof
    * @throws InvalidPrivateKeyFormatException the invalid private key format exception
    * @throws SignatureGenerateFailedException the signature generate failed exception
-   * @throws TransformJsonLdException         the transform json ld exception
+   * @throws TransformJsonLdException the transform json ld exception
    */
   public Proof createProof(Verifiable document, URI verificationMethodId, IPrivateKey privateKey)
       throws InvalidPrivateKeyFormatException,
-      SignatureGenerateFailedException,
-      TransformJsonLdException {
+          SignatureGenerateFailedException,
+          TransformJsonLdException {
 
     return createProof(document, verificationMethodId, privateKey, ProofPurpose.ASSERTION_METHOD);
   }
@@ -101,14 +98,14 @@ public class LinkedDataProofGenerator {
   /**
    * Create proof proof.
    *
-   * @param verifiable           the verifiable
+   * @param verifiable the verifiable
    * @param verificationMethodId the verification method id
-   * @param privateKey           the private key
-   * @param proofPurpose         the proof purpose
+   * @param privateKey the private key
+   * @param proofPurpose the proof purpose
    * @return the proof
    * @throws InvalidPrivateKeyFormatException the invalid private key format exception
    * @throws SignatureGenerateFailedException the signature generate failed exception
-   * @throws TransformJsonLdException         the transform json ld exception
+   * @throws TransformJsonLdException the transform json ld exception
    */
   public Proof createProof(
       Verifiable verifiable,
@@ -116,8 +113,8 @@ public class LinkedDataProofGenerator {
       IPrivateKey privateKey,
       ProofPurpose proofPurpose)
       throws InvalidPrivateKeyFormatException,
-      SignatureGenerateFailedException,
-      TransformJsonLdException {
+          SignatureGenerateFailedException,
+          TransformJsonLdException {
 
     Proof proof = null;
     if (type == SignatureType.ED25519) {

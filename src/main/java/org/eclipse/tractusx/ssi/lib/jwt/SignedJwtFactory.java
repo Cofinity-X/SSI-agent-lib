@@ -63,8 +63,8 @@ public class SignedJwtFactory {
    * Curve key ({@code P-256}) is advisable.
    *
    * @param audience the value of the token audience claim, e.g. the IDS Webhook address.
-   * @param keyId    the id of the key, the kid of the jws-header will be constructed via
-   *                 <issuer>+"#"+<keyId>
+   * @param keyId the id of the key, the kid of the jws-header will be constructed via
+   *     <issuer>+"#"+<keyId>
    * @return a {@code SignedJWT} that is signed with the private key and contains all claims listed.
    */
   @SneakyThrows
@@ -85,10 +85,9 @@ public class SignedJwtFactory {
    * Curve key ({@code P-256}) is advisable.
    *
    * @param audience the value of the token audience claim, e.g. the IDS Webhook address.
-   * @param keyId    the id of the key, the kid of the jws-header will be constructed via
-   *                 <issuer>+"#"+<keyId>
-   * @param config   the custom configuration for the JWT to create, e.g. custom expiration time
-   *                 (exp)
+   * @param keyId the id of the key, the kid of the jws-header will be constructed via
+   *     <issuer>+"#"+<keyId>
+   * @param config the custom configuration for the JWT to create, e.g. custom expiration time (exp)
    * @return a {@code SignedJWT} that is signed with the private key and contains all claims listed.
    */
   @SneakyThrows
@@ -105,8 +104,7 @@ public class SignedJwtFactory {
     final String subject = didIssuer.toString();
 
     TypeReference<HashMap<String, Object>> typeRef =
-        new TypeReference<HashMap<String, Object>>() {
-        };
+        new TypeReference<HashMap<String, Object>>() {};
 
     // make on object out of it so that it can get serialized again
     Map<String, Object> vp =

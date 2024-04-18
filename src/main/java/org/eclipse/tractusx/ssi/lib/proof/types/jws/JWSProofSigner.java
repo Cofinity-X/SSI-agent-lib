@@ -34,11 +34,9 @@ import org.eclipse.tractusx.ssi.lib.proof.ISigner;
 import org.eclipse.tractusx.ssi.lib.proof.SignatureType;
 import org.eclipse.tractusx.ssi.lib.proof.hash.HashedLinkedData;
 
-/**
- * The type Jws proof signer.
- */
+/** The type Jws proof signer. */
 public class JWSProofSigner implements ISigner {
-  
+
   private final SignatureType signatureType;
 
   public JWSProofSigner(final SignatureType signatureType) {
@@ -48,7 +46,6 @@ public class JWSProofSigner implements ISigner {
   public JWSProofSigner() {
     this.signatureType = SignatureType.JWS;
   }
-
 
   @Override
   public byte[] sign(HashedLinkedData hashedLinkedData, IPrivateKey privateKey)

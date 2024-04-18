@@ -1,4 +1,3 @@
-
 /*
  * ******************************************************************************
  * Copyright (c) 2021,2024 Contributors to the Eclipse Foundation
@@ -48,7 +47,7 @@ class VP {
   /**
    * Create a verifiable presentation.
    *
-   * @param issuer      the issuer
+   * @param issuer the issuer
    * @param credentials the credentials
    * @return the verifiable presentation
    */
@@ -63,7 +62,6 @@ class VP {
         .build();
   }
 
-
   public static SignedJWT createVPAsJWT(
       Did issuer,
       List<VerifiableCredential> credentials,
@@ -77,6 +75,5 @@ class VP {
             new SignedJwtFactory(), new JsonLdSerializerImpl(), issuer);
 
     return presentationFactory.createPresentation(issuer, credentials, audience, privateKey, keyId);
-
   }
 }

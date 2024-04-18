@@ -72,15 +72,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-/**
- * The type Sign and verify test.
- */
+/** The type Sign and verify test. */
 class SignAndVerifyTest {
 
   /**
    * Test sign and verify ed 201559.
    *
-   * @throws IOException                      the io exception
+   * @throws IOException the io exception
    * @throws InvalidPrivateKeyFormatException the invalide private key format
    * @throws InvalidPrivateKeyFormatException the invalide public key format
    */
@@ -106,18 +104,18 @@ class SignAndVerifyTest {
   /**
    * Test sign and verify jws.
    *
-   * @throws IOException                      the io exception
-   * @throws JOSEException                    the jose exception
-   * @throws NoSuchAlgorithmException         the no such algorithm exception
+   * @throws IOException the io exception
+   * @throws JOSEException the jose exception
+   * @throws NoSuchAlgorithmException the no such algorithm exception
    * @throws InvalidPrivateKeyFormatException the invalide private key format
    * @throws InvalidPrivateKeyFormatException the invalide public key format
    */
   @Test
   void testSignAndVerify_JWS_ED()
       throws IOException,
-      NoSuchAlgorithmException,
-      SignatureGenerateFailedException,
-      InvalidPrivateKeyFormatException {
+          NoSuchAlgorithmException,
+          SignatureGenerateFailedException,
+          InvalidPrivateKeyFormatException {
     var testIdentity = TestIdentityFactory.newIdentityWithEDVerificationMethod();
     verifyJws(testIdentity, SignatureType.JWS);
   }
@@ -125,8 +123,8 @@ class SignAndVerifyTest {
   @Test
   void testSignAndVerify_JWS_RSA()
       throws NoSuchAlgorithmException,
-      InvalidPrivateKeyFormatException,
-      SignatureGenerateFailedException {
+          InvalidPrivateKeyFormatException,
+          SignatureGenerateFailedException {
     var testIdentity = TestIdentityFactory.newIdentityWithRSAKeys();
     verifyJws(testIdentity, SignatureType.JWS_RSA);
   }
@@ -134,9 +132,9 @@ class SignAndVerifyTest {
   @Test
   void testSignAndVerify_JWS_EC_P256()
       throws NoSuchAlgorithmException,
-      InvalidPrivateKeyFormatException,
-      InvalidAlgorithmParameterException,
-      SignatureGenerateFailedException {
+          InvalidPrivateKeyFormatException,
+          InvalidAlgorithmParameterException,
+          SignatureGenerateFailedException {
     var testIdentity = TestIdentityFactory.newIdentityWithECKeys("secp256r1", Curve.P_256);
     verifyJws(testIdentity, SignatureType.JWS_P256);
   }
@@ -144,9 +142,9 @@ class SignAndVerifyTest {
   @Test
   void testSignAndVerify_JWS_EC_P384()
       throws NoSuchAlgorithmException,
-      InvalidPrivateKeyFormatException,
-      InvalidAlgorithmParameterException,
-      SignatureGenerateFailedException {
+          InvalidPrivateKeyFormatException,
+          InvalidAlgorithmParameterException,
+          SignatureGenerateFailedException {
     var testIdentity = TestIdentityFactory.newIdentityWithECKeys("secp384r1", Curve.P_384);
     verifyJws(testIdentity, SignatureType.JWS_P384);
   }
@@ -154,9 +152,9 @@ class SignAndVerifyTest {
   @Test
   void testSignAndVerify_JWS_EC_256K1()
       throws NoSuchAlgorithmException,
-      InvalidPrivateKeyFormatException,
-      InvalidAlgorithmParameterException,
-      SignatureGenerateFailedException {
+          InvalidPrivateKeyFormatException,
+          InvalidAlgorithmParameterException,
+          SignatureGenerateFailedException {
     var testIdentity = TestIdentityFactory.newIdentityWithECKeys("secp256k1", Curve.SECP256K1);
     verifyJws(testIdentity, SignatureType.JWS_SEC_P_256K1);
   }
@@ -365,8 +363,8 @@ class SignAndVerifyTest {
 
   void verifyJws(TestIdentity testIdentity, SignatureType type)
       throws NoSuchAlgorithmException,
-      SignatureGenerateFailedException,
-      InvalidPrivateKeyFormatException {
+          SignatureGenerateFailedException,
+          InvalidPrivateKeyFormatException {
     final TestDidResolver didResolver = new TestDidResolver();
     didResolver.register(testIdentity);
     var data = "Hello World".getBytes();

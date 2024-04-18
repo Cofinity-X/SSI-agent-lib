@@ -27,9 +27,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-/**
- * The type Serialized jwt presentation factory impl test.
- */
+/** The type Serialized jwt presentation factory impl test. */
 class SerializedJwtPresentationFactoryImplTest {
 
   private LinkedDataProofGenerator linkedDataProofGenerator;
@@ -46,9 +44,7 @@ class SerializedJwtPresentationFactoryImplTest {
     return Stream.of(Arguments.of(confNoTime), Arguments.of(conf));
   }
 
-  /**
-   * Test jwt serialization.
-   */
+  /** Test jwt serialization. */
   @SneakyThrows
   @ParameterizedTest
   @MethodSource("testConfigs")

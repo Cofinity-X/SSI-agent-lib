@@ -42,9 +42,7 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * The type Remote document loader.
- */
+/** The type Remote document loader. */
 public class RemoteDocumentLoader implements DocumentLoader {
 
   private static final int CACHE_PERIOD_IN_DAYS = 1;
@@ -55,63 +53,40 @@ public class RemoteDocumentLoader implements DocumentLoader {
    *
    * @param loader the default http loader
    */
-  @Setter
-  private static DocumentLoader defaultHttpLoader;
+  @Setter private static DocumentLoader defaultHttpLoader;
 
   /**
    * -- SETTER -- Sets default file loader.
    *
    * @param loader the default file loader
    */
-  @Setter
-  private static DocumentLoader defaultFileLoader;
+  @Setter private static DocumentLoader defaultFileLoader;
 
-  @Getter
-  private static DocumentLoader httpLoader;
+  @Getter private static DocumentLoader httpLoader;
 
-  @Getter
-  private static DocumentLoader fileLoader;
+  @Getter private static DocumentLoader fileLoader;
 
-  @Getter
-  @Setter
-  private boolean enableLocalCache = true;
+  @Getter @Setter private boolean enableLocalCache = true;
 
-  @Getter
-  @Setter
-  private boolean enableHttp = false;
+  @Getter @Setter private boolean enableHttp = false;
 
-  @Getter
-  @Setter
-  private boolean enableHttps = false;
+  @Getter @Setter private boolean enableHttps = false;
 
-  @Getter
-  @Setter
-  private boolean enableFile = false;
+  @Getter @Setter private boolean enableFile = false;
 
-  @Getter
-  @Setter
-  private Map<URI, JsonDocument> localCache = new HashMap<>();
+  @Getter @Setter private Map<URI, JsonDocument> localCache = new HashMap<>();
 
-  @Getter
-  @Setter
+  @Getter @Setter
   private Cache<URI, Document> remoteCache =
       Caffeine.newBuilder().expireAfterWrite(Duration.ofDays(CACHE_PERIOD_IN_DAYS)).build();
 
-  @Getter
-  @Setter
-  private List<URI> httpContexts = new ArrayList<>();
+  @Getter @Setter private List<URI> httpContexts = new ArrayList<>();
 
-  @Getter
-  @Setter
-  private List<URI> httpsContexts = new ArrayList<>();
+  @Getter @Setter private List<URI> httpsContexts = new ArrayList<>();
 
-  @Getter
-  @Setter
-  private List<URI> fileContexts = new ArrayList<>();
+  @Getter @Setter private List<URI> fileContexts = new ArrayList<>();
 
-  /**
-   * The constant DOCUMENT_LOADER.
-   */
+  /** The constant DOCUMENT_LOADER. */
   public static final RemoteDocumentLoader DOCUMENT_LOADER = new RemoteDocumentLoader();
 
   /**
@@ -156,8 +131,7 @@ public class RemoteDocumentLoader implements DocumentLoader {
     RemoteDocumentLoader.defaultFileLoader = defaultFileLoader;
   }
 
-  private RemoteDocumentLoader() {
-  }
+  private RemoteDocumentLoader() {}
 
   /**
    * Gets instance.
@@ -172,7 +146,7 @@ public class RemoteDocumentLoader implements DocumentLoader {
     DocumentLoader loader = null;
     if ((this.isEnableHttp() || this.isEnableHttps())
         && ("http".equalsIgnoreCase(url.getScheme())
-        || "https".equalsIgnoreCase(url.getScheme()))) {
+            || "https".equalsIgnoreCase(url.getScheme()))) {
       loader = getHttpLoader();
       if (loader == null) {
         loader = getDefaultHttpLoader();

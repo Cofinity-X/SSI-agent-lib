@@ -69,9 +69,7 @@ import org.eclipse.tractusx.ssi.lib.proof.IVerifier;
 import org.eclipse.tractusx.ssi.lib.proof.SignatureType;
 import org.eclipse.tractusx.ssi.lib.proof.hash.HashedLinkedData;
 
-/**
- * The type Jws proof verifier.
- */
+/** The type Jws proof verifier. */
 @RequiredArgsConstructor
 public class JWSProofVerifier implements IVerifier {
 
@@ -81,9 +79,7 @@ public class JWSProofVerifier implements IVerifier {
 
   @SneakyThrows
   public boolean verify(HashedLinkedData hashedLinkedData, Verifiable document)
-      throws SignatureParseException,
-      DidParseException,
-      InvalidPublicKeyFormatException {
+      throws SignatureParseException, DidParseException, InvalidPublicKeyFormatException {
 
     final Proof proof =
         document.getProof().orElseThrow(() -> new SignatureParseException("no proof found"));
@@ -254,8 +250,8 @@ public class JWSProofVerifier implements IVerifier {
    * Verify hashedLinkedData.
    *
    * @param hashedLinkedData the hashed linked data
-   * @param signature        the signature
-   * @param publicKey        the public key
+   * @param signature the signature
+   * @param publicKey the public key
    * @return the boolean
    * @throws SignatureParseException
    * @throws SignatureVerificationException
@@ -272,8 +268,9 @@ public class JWSProofVerifier implements IVerifier {
           case JWS -> ((X25519PublicKey) publicKey).toJwk();
           case JWS_P256, JWS_P384, JWS_SEC_P_256K1 -> ((ECPublicKeyWrapper) publicKey).toJwk();
           case JWS_RSA -> ((RSAPublicKeyWrapper) publicKey).toJwk();
-          default -> throw new IllegalArgumentException(
-              String.format(ALGORITHM_IS_NOT_SUPPORTED, type.algorithm));
+          default ->
+              throw new IllegalArgumentException(
+                  String.format(ALGORITHM_IS_NOT_SUPPORTED, type.algorithm));
         };
 
     JWSVerifier verifier = getVerifier(new JWSHeader(new JWSAlgorithm(type.algorithm)), jwk);

@@ -37,8 +37,8 @@ import org.eclipse.tractusx.ssi.lib.model.verifiable.credential.VerifiableCreden
 import org.eclipse.tractusx.ssi.lib.proof.LinkedDataProofValidation;
 
 /**
- * This is example class to demonstrate how to verify @{@link SignedJWT} and
- * {@link VerifiableCredential}
+ * This is example class to demonstrate how to verify @{@link SignedJWT} and {@link
+ * VerifiableCredential}
  */
 public class Verification {
 
@@ -68,16 +68,22 @@ public class Verification {
    *
    * @param verifiableCredential the verifiable credential
    * @return the boolean
-   * @throws TransformJsonLdException             the transform json ld exception
-   * @throws NoVerificationKeyFoundException      the no verification key found exception
-   * @throws UnsupportedSignatureTypeException    the unsupported signature type exception
-   * @throws InvalidPublicKeyFormatException      the invalid public key format exception
-   * @throws SignatureParseException              the signature parse exception
-   * @throws DidParseException                    the did parse exception
+   * @throws TransformJsonLdException the transform json ld exception
+   * @throws NoVerificationKeyFoundException the no verification key found exception
+   * @throws UnsupportedSignatureTypeException the unsupported signature type exception
+   * @throws InvalidPublicKeyFormatException the invalid public key format exception
+   * @throws SignatureParseException the signature parse exception
+   * @throws DidParseException the did parse exception
    * @throws SignatureVerificationFailedException the signature verification failed exception
    */
   public static boolean verifyED25519LD(VerifiableCredential verifiableCredential)
-      throws TransformJsonLdException, NoVerificationKeyFoundException, UnsupportedSignatureTypeException, InvalidPublicKeyFormatException, SignatureParseException, DidParseException, SignatureVerificationFailedException {
+      throws TransformJsonLdException,
+          NoVerificationKeyFoundException,
+          UnsupportedSignatureTypeException,
+          InvalidPublicKeyFormatException,
+          SignatureParseException,
+          DidParseException,
+          SignatureVerificationFailedException {
     // DID Resolver constructor params
     DidWebParser didParser = new DidWebParser();
     var httpClient = HttpClient.newHttpClient();

@@ -23,7 +23,6 @@ package org.eclipse.tractusx.ssi.lib.proof;
 import com.nimbusds.jose.JWSAlgorithm;
 
 public enum SignatureType {
-
   ED25519(Constants.JSON_WEB_SIGNATURE_2020, ""),
 
   JWS(Constants.JSON_WEB_SIGNATURE_2020, JWSAlgorithm.EdDSA.getName()),

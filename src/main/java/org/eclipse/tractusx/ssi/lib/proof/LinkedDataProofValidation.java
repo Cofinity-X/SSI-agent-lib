@@ -42,15 +42,11 @@ import org.eclipse.tractusx.ssi.lib.proof.types.jws.JWSProofVerifier;
 import org.eclipse.tractusx.ssi.lib.validation.JsonLdValidator;
 import org.eclipse.tractusx.ssi.lib.validation.JsonLdValidatorImpl;
 
-/**
- * The type Linked data proof validation.
- */
+/** The type Linked data proof validation. */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class LinkedDataProofValidation {
 
-  /**
-   * The Log.
-   */
+  /** The Log. */
   static final Logger LOG = Logger.getLogger(LinkedDataProofValidation.class.getName());
 
   /**
@@ -129,7 +125,6 @@ public class LinkedDataProofValidation {
     return isVerified;
   }
 
-
   @SneakyThrows
   private Boolean validateVerificationMethodOfVC(Verifiable verifiable) {
     // Verifiable Presentation doesn't have an Issuer
@@ -142,7 +137,6 @@ public class LinkedDataProofValidation {
     final String[] splitVerificationMethod = verficationMethod.split("#");
     return splitVerificationMethod[0].equals(issuer);
   }
-
 
   @SneakyThrows
   private String getVerificationMethod(Verifiable verifiable) {
