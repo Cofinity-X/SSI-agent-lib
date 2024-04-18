@@ -31,10 +31,5 @@ public class SigningMethod {
     throw new IllegalStateException("Constant class");
   }
 
-  /** The constant SIGNING_METHOD_ES256. */
-  private SigningMethod() {
-    // static
-  }
-
   public static final String SIGNING_METHOD_ES256 = "ES256";
 }

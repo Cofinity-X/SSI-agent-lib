@@ -26,10 +26,12 @@ import java.net.http.HttpClient;
 import org.eclipse.tractusx.ssi.lib.did.web.DidWebResolver;
 import org.eclipse.tractusx.ssi.lib.did.web.util.DidWebParser;
 import org.eclipse.tractusx.ssi.lib.exception.did.DidParseException;
+import org.eclipse.tractusx.ssi.lib.exception.did.DidResolverException;
 import org.eclipse.tractusx.ssi.lib.exception.json.TransformJsonLdException;
 import org.eclipse.tractusx.ssi.lib.exception.key.InvalidPublicKeyFormatException;
 import org.eclipse.tractusx.ssi.lib.exception.proof.NoVerificationKeyFoundException;
 import org.eclipse.tractusx.ssi.lib.exception.proof.SignatureParseException;
+import org.eclipse.tractusx.ssi.lib.exception.proof.SignatureVerificationException;
 import org.eclipse.tractusx.ssi.lib.exception.proof.SignatureVerificationFailedException;
 import org.eclipse.tractusx.ssi.lib.exception.proof.UnsupportedSignatureTypeException;
 import org.eclipse.tractusx.ssi.lib.jwt.SignedJwtVerifier;
@@ -38,7 +40,7 @@ import org.eclipse.tractusx.ssi.lib.proof.LinkedDataProofValidation;
 
 /**
  * This is example class to demonstrate how to verify @{@link SignedJWT} and {@link
- * VerifiableCredential}
+ * VerifiableCredential}*
  */
 public class Verification {
 
@@ -50,8 +52,16 @@ public class Verification {
    * Verify jwt.
    *
    * @param jwt the jwt
+   * @throws SignatureParseException the signature parse exception
+   * @throws DidParseException the did parse exception
+   * @throws SignatureVerificationException the signature verification exception
+   * @throws DidResolverException the did resolver exception
    */
-  public static void verifyJWT(SignedJWT jwt) {
+  public static void verifyJWT(SignedJWT jwt)
+      throws SignatureParseException,
+          DidParseException,
+          SignatureVerificationException,
+          DidResolverException {
     // DID Resolver constructor params
     DidWebParser didParser = new DidWebParser();
     var httpClient = HttpClient.newHttpClient();

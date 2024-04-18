@@ -26,9 +26,11 @@ import static org.junit.Assert.assertNotNull;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
+import java.net.URI;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import lombok.SneakyThrows;
 import org.eclipse.tractusx.ssi.lib.SsiLibrary;
-import org.eclipse.tractusx.ssi.lib.crypt.octet.OctetKeyPairFactory;
 import org.eclipse.tractusx.ssi.lib.jwt.SignedJwtFactory;
 import org.eclipse.tractusx.ssi.lib.util.identity.TestIdentity;
 import org.eclipse.tractusx.ssi.lib.util.identity.TestIdentityFactory;
@@ -43,22 +45,25 @@ public class SignedJwtFactoryTest {
   @BeforeAll
   public static void beforeAll() {
     SsiLibrary.initialize();
-    credentialIssuer = TestIdentityFactory.newIdentityWithED25519Keys();
+    credentialIssuer = TestIdentityFactory.newIdentityWithEDKeys();
   }
 
+  @SneakyThrows
   @Test
   @DisplayName("Should return a signed Jwt with the given Map of claims and the given private key.")
   void shouldReturnSignedJWT() {
 
     LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
-    SignedJwtFactory signedJwtFactory = new SignedJwtFactory(new OctetKeyPairFactory());
+    SignedJwtFactory signedJwtFactory = new SignedJwtFactory();
     String keyId = "key-1";
     // When
 
     SignedJWT signedJWT =
         signedJwtFactory.create(
+            new URI("http://example#1"),
             credentialIssuer.getDid(),
             credentialIssuer.getDid(),
+            new Date(),
             claims,
             credentialIssuer.getPrivateKey(),
             keyId);
