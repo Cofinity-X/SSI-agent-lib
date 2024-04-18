@@ -23,6 +23,8 @@ package org.eclipse.tractusx.ssi.lib.proof;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -165,7 +167,8 @@ public class LinkedDataProofGenerator {
     } else {
 
       proof.put(JWSSignature2020.JWS, new String(signature, StandardCharsets.UTF_8));
-
+      DateTimeFormatter formatter =
+          DateTimeFormatter.ofPattern(Ed25519Signature2020.TIME_FORMAT).withZone(ZoneOffset.UTC);
       Map<String, Object> standardEntries =
           Map.of(
               Proof.TYPE,
@@ -175,9 +178,9 @@ public class LinkedDataProofGenerator {
               JWSSignature2020.VERIFICATION_METHOD,
               verificationMethodId,
               JWSSignature2020.CREATED,
-              Instant.now(),
+              formatter.format(Instant.now()),
               JWSSignature2020.PROOF_PURPOSE,
-              proofPurpose);
+              proofPurpose.purpose);
 
       HashMap<String, Object> entries = new HashMap<>(standardEntries);
 
