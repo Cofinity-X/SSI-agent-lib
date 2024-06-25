@@ -112,7 +112,7 @@ public class VerifiableCredential extends Verifiable {
           String.format("Invalid VerifiableCredential: %s", SerializeUtil.toJson(json)), e);
     }
 
-    if (getCredentialSubject().isEmpty()) {
+    if (Objects.isNull(getCredentialSubject())) {
       throw new IllegalArgumentException(
           String.format(
               "Invalid VerifiableCredential. CredentialSubject must not be empty: %s",
@@ -172,14 +172,11 @@ public class VerifiableCredential extends Verifiable {
    * @return the credential subject
    */
   @NonNull
-  public List<VerifiableCredentialSubject> getCredentialSubject() {
+  public VerifiableCredentialSubject getCredentialSubject() {
     Object subject = get(CREDENTIAL_SUBJECT);
 
-    if (subject instanceof List) {
-      return ((List<Map<String, Object>>) subject)
-          .stream().map(VerifiableCredentialSubject::new).toList();
-    } else if (subject instanceof Map) {
-      return List.of(new VerifiableCredentialSubject((Map<String, Object>) subject));
+    if (subject instanceof Map) {
+      return new VerifiableCredentialSubject((Map<String, Object>) subject);
     } else {
       throw new IllegalArgumentException(
           "Invalid credential subject type. "

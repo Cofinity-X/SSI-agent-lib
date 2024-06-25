@@ -36,8 +36,7 @@ class LinkedDataTransformerTest {
 
   private static final String SummaryVerifiableCredential =
       "{\n"
-          + "            \"credentialSubject\": [\n"
-          + "                {\n"
+          + "            \"credentialSubject\": {\n"
           + "                    \"contractTemplate\": \"https://public.catena-x.org/contracts/\",\n"
           + "                    \"holderIdentifier\": \"BPN12345678\",\n"
           + "                    \"id\": \"did:web:localhost%3A8080:BPN12345678\",\n"
@@ -45,8 +44,7 @@ class LinkedDataTransformerTest {
           + "                        \"BpnCredential\"\n"
           + "                    ],\n"
           + "                    \"type\": \"SummaryCredential\"\n"
-          + "                }\n"
-          + "            ],\n"
+          + "                },\n"
           + "            \"issuanceDate\": \"2023-07-03T13:11:58Z\",\n"
           + "            \"id\": \"did:web:localhost%3A8080:BPNOPERATOR#f7626dd8-4d29-400a-b697-93e6c98cce02\",\n"
           + "            \"proof\": {\n"

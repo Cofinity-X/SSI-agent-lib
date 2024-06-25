@@ -43,7 +43,7 @@ public class VerifiableCredentialBuilder {
   private URI issuer;
   private Instant issuanceDate;
   private Instant expirationDate;
-  private List<VerifiableCredentialSubject> credentialSubject;
+  private VerifiableCredentialSubject credentialSubject;
   private Proof proof;
   private VerifiableCredentialStatus credentialStatus;
 
@@ -120,20 +120,8 @@ public class VerifiableCredentialBuilder {
    * @return the verifiable credential builder
    */
   public VerifiableCredentialBuilder credentialSubject(
-      List<VerifiableCredentialSubject> credentialSubject) {
-    this.credentialSubject = credentialSubject;
-    return this;
-  }
-
-  /**
-   * Credential subject verifiable credential builder.
-   *
-   * @param credentialSubject the credential subject
-   * @return the verifiable credential builder
-   */
-  public VerifiableCredentialBuilder credentialSubject(
       VerifiableCredentialSubject credentialSubject) {
-    this.credentialSubject = List.of(credentialSubject);
+    this.credentialSubject = credentialSubject;
     return this;
   }
 
