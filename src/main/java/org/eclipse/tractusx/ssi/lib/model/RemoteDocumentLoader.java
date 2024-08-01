@@ -32,6 +32,7 @@ import com.apicatalog.jsonld.loader.HttpLoader;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,6 +127,24 @@ public class RemoteDocumentLoader implements DocumentLoader {
 
   @Override
   public Document loadDocument(URI url, DocumentLoaderOptions options) throws JsonLdError {
+
+    // Catena-ng is deleted, so we are replacing it with Cofinity-X
+    if (url.toString().equals("https://catenax-ng.github.io/product-core-schemas/SummaryVC.json")) {
+      try {
+        url = new URI("https://cofinity-x.github.io/schema-registry/v1.1/SummaryVC.json");
+      } catch (URISyntaxException e) {
+        throw new RuntimeException("could not load schema from " + url);
+      }
+    }
+
+    if (url.toString()
+        .equals("https://catenax-ng.github.io/product-core-schemas/businessPartnerData.json")) {
+      try {
+        url = new URI("https://cofinity-x.github.io/schema-registry/v1.1/businessPartnerData.json");
+      } catch (URISyntaxException e) {
+        throw new RuntimeException("could not load schema from " + url);
+      }
+    }
 
     if (this.isEnableLocalCache() && this.getLocalCache().containsKey(url)) {
       return this.getLocalCache().get(url);
