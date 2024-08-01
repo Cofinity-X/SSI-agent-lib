@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.tractusx.ssi.lib.exception.json.RemoteDocumentLoadException;
 
 /** The type Remote document loader. */
 public class RemoteDocumentLoader implements DocumentLoader {
@@ -133,7 +134,7 @@ public class RemoteDocumentLoader implements DocumentLoader {
       try {
         url = new URI("https://cofinity-x.github.io/schema-registry/v1.1/SummaryVC.json");
       } catch (URISyntaxException e) {
-        throw new RuntimeException("could not load schema from " + url);
+        throw new RemoteDocumentLoadException("could not load schema from " + url, e);
       }
     }
 
@@ -142,7 +143,7 @@ public class RemoteDocumentLoader implements DocumentLoader {
       try {
         url = new URI("https://cofinity-x.github.io/schema-registry/v1.1/businessPartnerData.json");
       } catch (URISyntaxException e) {
-        throw new RuntimeException("could not load schema from " + url);
+        throw new RemoteDocumentLoadException("could not load schema from " + url, e);
       }
     }
 
